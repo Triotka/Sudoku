@@ -16,7 +16,7 @@ namespace Sudoku
     {
         public int numberInRow;
         public int numberInCol;
-        public bool solved;
+        public bool solved; //this grid was verified and has right solution user cannot type anymore
 
        
     }
@@ -24,9 +24,9 @@ namespace Sudoku
     
     public partial class Form1 : Form
     {
-        const int numberOfSudokus = 50;
-        const int sudokuSize = 9;
-        public int sizeOfGrid = 40;
+        const int numberOfSudokus = 50; //number of sudokus in file
+        const int sudokuSize = 9; //size of sudoku 9x9
+        public int sizeOfGrid = 40; //size of square grid
         const int buttonWidth = 100;
         const int buttonHeight = 40;
         const int buttonPadding = 20;
@@ -39,26 +39,24 @@ namespace Sudoku
         Button startButton;
         Button clearButton;
         Button solutionButton;
-        public int[,,] sudokus = new int[50, 9, 9];
-        public int[,] solvedSudoku = new int[sudokuSize, sudokuSize];
+        public int[,,] sudokus = new int[50, 9, 9]; //stored sudokus from file
+        public int[,] solvedSudoku = new int[sudokuSize, sudokuSize]; //current sudoku solution
+        
+        //colors to paint sudoku
         Color color1 = Color.BlanchedAlmond;
         Color color2 = Color.White;
-        Label label;
-        int points;
+        Label pointsLabel; //label to view points
+        int points; //count checked right answers
         
-
-
-
-
-
-
-        public static int[,] solveSudoku(int[,] original)
+        // finds solution to sudoku given and returns the solution
+        public int[,] solveSudoku(int[,] original)
         {
             int[,] solved = (int[,])original.Clone();
 
             solve(solved);
             return solved;
         }
+        // recursively calling
         private static bool solve(int [,] game)
         {
             for (int r = 0; r < game.GetLength(0); r++)
@@ -90,6 +88,7 @@ namespace Sudoku
             }
             return true;
         }
+        // checks if sudoku spaces are valid
         private static bool isValid(int[,] game, int row, int col, int num)
         {
             for (int i = 0; i < 9; i++)
@@ -107,21 +106,18 @@ namespace Sudoku
             return true;
         }
 
+        //creates label for points
         public void createLabel()
         {
-            label = new Label();
-            this.Controls.Add(label);
-            label.Location = new Point(buttonPadding * 3 + buttonWidth + sudokuSize * sizeOfGrid, buttonPadding * (5 * 2 + 1));
-            label.Text = "Ahoj";
+            pointsLabel = new Label();
+            this.Controls.Add(pointsLabel);
+            pointsLabel.Location = new Point(buttonPadding * 3 + buttonWidth + sudokuSize * sizeOfGrid, buttonPadding * (6 * 2 + 1));
+            pointsLabel.AutoSize = true;
+            pointsLabel.Font = new Font("Arial", 14, FontStyle.Bold);
 
         }
 
-
-        
-
-
-
-
+        //creates Radio Buttons for choosing difficulty
         public void createRadioButtons()
         {
             string[] names = { "Very Easy", "Easy", "Moderate", "Hard", "Very Hard" };
@@ -136,6 +132,8 @@ namespace Sudoku
             }
             radioButtons[0].Checked = true;
         }
+
+        //loads sudoku certain sudoku of certain number from stored sudokus to screen and finds solution to it
         public void loadSudoku(int number)
         {
             changePoints(0);
@@ -147,18 +145,19 @@ namespace Sudoku
                     numbers[j, i] = sudokus[number, i, j];
                     if (numbers[j, i] != 0)
                     {
-                        loaded[j, i] = true;
-                        grids[j, i].solved = true;
+                        loaded[j, i] = true; // this number is loaded it is not set by player
+                        grids[j, i].solved = true; //this number is definetely right, it is loaded
                     }
                     else
                     {
-                        grids[j, i].solved = false;
+                        grids[j, i].solved = false; //not sure if it is right not checked or loaded
                     }
                 }
             }
             solvedSudoku = solveSudoku(numbers);
         }
 
+        // makes numbers visible to player from numbers[,] array
         public void updateGridText()
         {
             for (int r = 0; r < sudokuSize; r++)
@@ -177,6 +176,8 @@ namespace Sudoku
             }
             
         }
+        
+        // creates buttons
         public void CreateButtons()
         {
             checkButton = new Button();
@@ -204,6 +205,8 @@ namespace Sudoku
             changesSizesButtons();
 
         }
+
+        //sets sizes and locations to buttons
         public void changesSizesButtons()
         {
             clearButton.Size = new Size(buttonWidth, buttonHeight);
@@ -219,6 +222,8 @@ namespace Sudoku
             solutionButton.Location = new Point(buttonPadding, buttonHeight * 3 + buttonPadding * 4);
 
         }
+
+        //change sizes and location to sudoku
         public void changeSizesSudoku()
         {
             for (int r = 0; r < sudokuSize; r++)
@@ -232,15 +237,16 @@ namespace Sudoku
         }
 
 
+        //colors sudoku
         public void colorSudoku()
         {
             for (int r = 0; r < sudokuSize; r++)
             {
                 for (int c = 0; c < sudokuSize; c++)
                 {
-                    if (r >= 3 && r < 6)
+                    if (r >= 3 && r < 6) // midle rows
                     {
-                        if (c >= 3 && c < 6)
+                        if (c >= 3 && c < 6) // middle collumns
                         {
                             grids[r, c].BackColor = color1;
                         }
@@ -264,6 +270,8 @@ namespace Sudoku
                 }
             }
         }
+
+        //creates sudoku from buttons as grids
         public void CreateSudoku()
         {
             for (int r = 0; r < sudokuSize; r++)
@@ -276,10 +284,6 @@ namespace Sudoku
                     grids[r, c].numberInRow = r;
                     grids[r, c].numberInCol = c;
                     this.Controls.Add(grids[r,c]);
-
-                    
-                    
-
                 }
             }
             updateGridText();
@@ -287,23 +291,13 @@ namespace Sudoku
             colorSudoku();
           
         }
-        public Form1()
-        {
-            InitializeComponent();
-            readSudokus();
-            CreateSudoku();
-            CreateButtons();
-            createRadioButtons();
-            createLabel();
-            startGame();
-        }
-
+        
+        // reads sudokus from file sudoku.txt which should be in folder where program is built.
         public void readSudokus()
         {
             string currentDirectory = Directory.GetCurrentDirectory();
             string path = Path.Combine(currentDirectory, "sudoku.txt");
             StreamReader file = new StreamReader(path);
-
 
             for (int i = 0; i< numberOfSudokus; i++)
             {
@@ -316,34 +310,37 @@ namespace Sudoku
                         {
                             sudokus[i, j - 1, k] = int.Parse(line[k].ToString());
                         }
-                    }
-                
-                   
+                    }  
                 }
-   
             }
             file.Close();
-
-
-           
         }
 
+        //starts a game by loading sudoku according to picked difficulty
         public void startGame()
         {
             for (int i = 0; i < numOfDifficulties; i++)
             {
 
-                if (radioButtons[i].Checked == true)
+                if (radioButtons[i].Checked == true) //if we find picked difficulty,
+                                                     //strange it does not work without == true
                 {
-
                     Random r = new Random();
-                    int sudokuNumber = r.Next(i * 10, (i + 1) * 10);
+                    int sudokuNumber = r.Next(i * 10, (i + 1) * 10);    //for each difficulty we have 10 sudokus
                     loadSudoku(sudokuNumber);
                     updateGridText();
                     break;
                 }
             }
         }
+
+        // change point to number passed and display in on label
+        public void changePoints(int change)
+        {
+            points = change;
+            pointsLabel.Text = "Score: " + change.ToString();
+        }
+
         private void startButton_Click(object sender, EventArgs e)
         {
             startGame();
@@ -355,11 +352,11 @@ namespace Sudoku
             {
                 for (int c = 0; c < sudokuSize; c++)
                 {
-                    numbers[r, c] = solvedSudoku[r, c];
-                    grids[r, c].solved = true;
+                    numbers[r, c] = solvedSudoku[r, c]; 
+                    grids[r, c].solved = true;  // we used solution button so we cannot type to sudoku
                 }
             }
-            updateGridText();
+            updateGridText(); //display solution
         }
 
 
@@ -370,40 +367,37 @@ namespace Sudoku
             {
                 for (int c = 0; c < sudokuSize; c++)
                 {
-                    if (numbers[r, c] != 0 && loaded[r,c] == false)
+                    if (numbers[r, c] != 0 && !(loaded[r,c])) //grids where a user typed something
                     {
-                        grids[r, c].solved = true;
+                        grids[r, c].solved = true; //we cannot retype we asked for solution
                        
-                        if (numbers[r,c] == solvedSudoku[r, c])
+                        if (numbers[r,c] == solvedSudoku[r, c]) //it is a right solution
                         {
-                            if (grids[r,c].ForeColor == Color.Black)
+                            if (grids[r,c].ForeColor == Color.Black && !(grids[r,c].solved)) // it is new
                             {
                                 points++;
-                                grids[r, c].ForeColor = Color.Green;
+                                grids[r, c].ForeColor = Color.Green; 
                                
                                 
                             }
                         }
-                        else
+                        else //bad solution
                         {
                             numbers[r, c] = solvedSudoku[r, c];
-                            grids[r, c].Text = numbers[r, c].ToString();
+                            grids[r, c].Text = numbers[r, c].ToString(); //change to right one
                             grids[r, c].ForeColor = Color.Red;
                         }  
                     }
                 }
             }
-            changePoints(points);
+            changePoints(points);   //add points
            
         }
-        public void changePoints(int change)
-        {
-            points = change;
-            label.Text = change.ToString();
-        }
+
+       
         private void clearButton_Click(object sender, EventArgs e)
         {
-            changePoints(0);
+            changePoints(0); //zero out points
             
             for (int r = 0; r < sudokuSize; r++)
             {
@@ -425,11 +419,11 @@ namespace Sudoku
         private void grid_keyPressed(object sender, KeyPressEventArgs e)
         {
             var grid = sender as Grid;
-            if (grid.solved)
+            if (grid.solved) //if it was asked for solution you cannot type
             {
                 return;
             }    
-            if (Char.IsDigit(e.KeyChar))
+            if (Char.IsDigit(e.KeyChar)) //key pressed is a number
             {
                  if (e.KeyChar == '0')
                  {
@@ -446,5 +440,16 @@ namespace Sudoku
             
             }
         }
-     }
+
+        public Form1()
+        {
+            InitializeComponent();
+            readSudokus();
+            CreateSudoku();
+            CreateButtons();
+            createRadioButtons();
+            createLabel();
+            startGame();
+        }
+    }
 }
