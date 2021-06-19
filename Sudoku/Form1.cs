@@ -41,6 +41,7 @@ namespace Sudoku
         Button solutionButton;
         public int[,,] sudokus = new int[50, 9, 9]; //stored sudokus from file
         public int[,] solvedSudoku = new int[sudokuSize, sudokuSize]; //current sudoku solution
+
         
         //colors to paint sudoku
         Color color1 = Color.BlanchedAlmond;
@@ -359,7 +360,7 @@ namespace Sudoku
             updateGridText(); //display solution
         }
 
-
+        //can be used to add points after asking for complete solution
         private void checkButton_Click(object sender, EventArgs e)
         {
             
@@ -371,12 +372,12 @@ namespace Sudoku
                     {
                         grids[r, c].solved = true; //we cannot retype we asked for solution
                        
-                        if (numbers[r,c] == solvedSudoku[r, c]) //it is a right solution
+                        if (numbers[r,c] == solvedSudoku[r, c]) //it is a right solution 
                         {
-                            if (grids[r,c].ForeColor == Color.Black && !(grids[r,c].solved)) // it is new
+                            if (grids[r,c].ForeColor == Color.Black) // it is new
                             {
                                 points++;
-                                grids[r, c].ForeColor = Color.Green; 
+                                grids[r, c].ForeColor = Color.MediumSeaGreen; 
                                
                                 
                             }
