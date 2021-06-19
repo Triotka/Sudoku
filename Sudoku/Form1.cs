@@ -44,6 +44,7 @@ namespace Sudoku
         Color color1 = Color.BlanchedAlmond;
         Color color2 = Color.White;
         Label label;
+        int points;
         
 
 
@@ -137,10 +138,12 @@ namespace Sudoku
         }
         public void loadSudoku(int number)
         {
+            changePoints(0);
             for (int i = 0; i < sudokuSize; i++ )
             {
                 for (int j = 0; j < sudokuSize; j++)
                 {
+                    grids[j, i].ForeColor = Color.Black; 
                     numbers[j, i] = sudokus[number, i, j];
                     if (numbers[j, i] != 0)
                     {
@@ -268,6 +271,7 @@ namespace Sudoku
                 for(int c = 0; c < sudokuSize; c++)
                 {
                     grids[r,c] = new Grid();
+                   
                     grids[r, c].KeyPress += grid_keyPressed;
                     grids[r, c].numberInRow = r;
                     grids[r, c].numberInCol = c;
@@ -372,23 +376,34 @@ namespace Sudoku
                        
                         if (numbers[r,c] == solvedSudoku[r, c])
                         {
-                            grids[r, c].ForeColor = Color.Green;
+                            if (grids[r,c].ForeColor == Color.Black)
+                            {
+                                points++;
+                                grids[r, c].ForeColor = Color.Green;
+                               
+                                
+                            }
                         }
                         else
                         {
                             numbers[r, c] = solvedSudoku[r, c];
                             grids[r, c].Text = numbers[r, c].ToString();
                             grids[r, c].ForeColor = Color.Red;
-                        }
-                        
-                        
+                        }  
                     }
                 }
             }
+            changePoints(points);
            
+        }
+        public void changePoints(int change)
+        {
+            points = change;
+            label.Text = change.ToString();
         }
         private void clearButton_Click(object sender, EventArgs e)
         {
+            changePoints(0);
             
             for (int r = 0; r < sudokuSize; r++)
             {
