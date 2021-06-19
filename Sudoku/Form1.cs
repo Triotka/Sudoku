@@ -35,6 +35,8 @@ namespace Sudoku
         Button startButton;
         Button clearButton;
         public int[,,] sudokus = new int[50, 9, 9];
+        Color color1 = Color.BlanchedAlmond;
+        Color color2 = Color.White;
 
 
         public void loadSudoku(int number)
@@ -118,8 +120,39 @@ namespace Sudoku
         }
 
 
-        
-            public void CreateSudoku()
+        public void colorSudoku()
+        {
+            for (int r = 0; r < sudokuSize; r++)
+            {
+                for (int c = 0; c < sudokuSize; c++)
+                {
+                    if (r >= 3 && r < 6)
+                    {
+                        if (c >= 3 && c < 6)
+                        {
+                            grids[r, c].BackColor = color1;
+                        }
+                        else
+                        {
+                            grids[r, c].BackColor = color2;
+                        }
+                    }
+                    else
+                    {
+                        if (!(c >= 3 && c < 6))
+                        {
+                            grids[r, c].BackColor = color1;
+                        }
+                        else
+                        {
+                            grids[r, c].BackColor = color2;
+                        }
+                    }
+
+                }
+            }
+        }
+        public void CreateSudoku()
         {
             for (int r = 0; r < sudokuSize; r++)
             {
@@ -130,13 +163,16 @@ namespace Sudoku
                     grids[r, c].numberInRow = r;
                     grids[r, c].numberInCol = c;
                     this.Controls.Add(grids[r,c]);
-                   
+
+                    
                     
 
                 }
             }
             updateGridText();
             changeSizesSudoku();
+            colorSudoku();
+          
         }
         public Form1()
         {
