@@ -26,7 +26,7 @@ namespace Sudoku
         const int numberOfSudokus = 50;
         const int sudokuSize = 9;
         public int sizeOfGrid = 40;
-        const int buttonWidth = 80;
+        const int buttonWidth = 100;
         const int buttonHeight = 40;
         const int buttonPadding = 20;
         const int numOfDifficulties = 5;
@@ -37,10 +37,73 @@ namespace Sudoku
         Button checkButton;
         Button startButton;
         Button clearButton;
+        Button solutionButton;
         public int[,,] sudokus = new int[50, 9, 9];
+        public int[,] solvedSudoku = new int[sudokuSize, sudokuSize];
         Color color1 = Color.BlanchedAlmond;
         Color color2 = Color.White;
         Label label;
+        
+
+
+
+
+
+
+        public static int[,] solveSudoku(int[,] original)
+        {
+            int[,] solved = (int[,])original.Clone();
+
+            solve(solved);
+            return solved;
+        }
+        private static bool solve(int [,] game)
+        {
+            for (int r = 0; r < game.GetLength(0); r++)
+            {
+                for (int c = 0; c < game.GetLength(1); c++)
+                {
+                    if (game[r, c] == 0)
+                    {
+                        for (int num = 1; num <= 9; num++)
+                        {
+                            if (isValid(game, r, c, num))
+                            {
+                                game[r, c] = num;
+
+                                if (solve(game))
+                                {
+                                    return true;
+                                }
+
+                                else
+                                {
+                                    game[r, c] = 0;
+                                }
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        private static bool isValid(int[,] game, int row, int col, int num)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                //check row  
+                if (game[i, col] != 0 && game[i, col] == num)
+                    return false;
+                //check column  
+                if (game[row, i] != 0 && game[row, i] == num)
+                    return false;
+                //check 3*3 block  
+                if (game[3 * (row / 3) + i / 3, 3 * (col / 3) + i % 3] != 0 && game[3 * (row / 3) + i / 3, 3 * (col / 3) + i % 3] == num)
+                    return false;
+            }
+            return true;
+        }
 
         public void createLabel()
         {
@@ -84,6 +147,7 @@ namespace Sudoku
                     }
                 }
             }
+            solvedSudoku = solveSudoku(numbers);
         }
 
         public void updateGridText()
@@ -109,6 +173,7 @@ namespace Sudoku
             checkButton = new Button();
             clearButton = new Button();
             startButton = new Button();
+            solutionButton = new Button();
 
             clearButton.Text = "Clear";
             this.Controls.Add(clearButton);
@@ -124,6 +189,9 @@ namespace Sudoku
             this.Controls.Add(checkButton);
             this.startButton.Click += new System.EventHandler(this.checkButton_Click);
 
+            solutionButton.Text = "Solution";
+            this.Controls.Add(solutionButton);
+            this.solutionButton.Click += new System.EventHandler(this.solutionButton_Click);
             changesSizesButtons();
 
         }
@@ -137,6 +205,9 @@ namespace Sudoku
 
             checkButton.Size = new Size(buttonWidth, buttonHeight);
             checkButton.Location = new Point(buttonPadding, buttonHeight * 2 + buttonPadding * 3);
+
+            solutionButton.Size = new Size(buttonWidth, buttonHeight);
+            solutionButton.Location = new Point(buttonPadding, buttonHeight * 3 + buttonPadding * 4);
 
         }
         public void changeSizesSudoku()
@@ -268,6 +339,18 @@ namespace Sudoku
             startGame();
         }
 
+        private void solutionButton_Click(object sender, EventArgs e)
+        {
+            for (int r = 0; r < sudokuSize; r++)
+            {
+                for (int c = 0; c < sudokuSize; c++)
+                {
+                    numbers[r, c] = solvedSudoku[r, c];
+                }
+            }
+            updateGridText();
+        }
+
 
         private void checkButton_Click(object sender, EventArgs e)
         {
@@ -301,7 +384,7 @@ namespace Sudoku
                  }
                 else
                 {
-                    // grid.Text = e.KeyChar.ToString();
+                    
                     numbers[grid.numberInRow, grid.numberInCol] = int.Parse(e.KeyChar.ToString());
 
                 }
