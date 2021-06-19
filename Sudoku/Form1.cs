@@ -44,6 +44,10 @@ namespace Sudoku
                 for (int j = 0; j < sudokuSize; j++)
                 {
                     numbers[j, i] = sudokus[number, i, j];
+                    if (numbers[j, i] != 0)
+                    {
+                        loaded[j, i] = true;
+                    }
                 }
             }
         }
