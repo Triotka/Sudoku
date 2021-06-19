@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace Sudoku
 {
+   
     public class Grid : Button
     {
         public int numberInRow;
@@ -27,18 +28,49 @@ namespace Sudoku
         public int sizeOfGrid = 40;
         const int buttonWidth = 80;
         const int buttonHeight = 40;
-        const int buttonPadding = 20; 
+        const int buttonPadding = 20;
+        const int numOfDifficulties = 5;
         public int[,] numbers = new int[sudokuSize, sudokuSize];
         public Grid[,] grids = new Grid[sudokuSize, sudokuSize];
         public bool[,] loaded = new bool[sudokuSize, sudokuSize];
+        public RadioButton[] radioButtons = new RadioButton [numOfDifficulties];
         Button checkButton;
         Button startButton;
         Button clearButton;
         public int[,,] sudokus = new int[50, 9, 9];
         Color color1 = Color.BlanchedAlmond;
         Color color2 = Color.White;
+        Label label;
+
+        public void createLabel()
+        {
+            label = new Label();
+            this.Controls.Add(label);
+            label.Location = new Point(buttonPadding * 3 + buttonWidth + sudokuSize * sizeOfGrid, buttonPadding * (5 * 2 + 1));
+            label.Text = "Ahoj";
+
+        }
 
 
+        
+
+
+
+
+        public void createRadioButtons()
+        {
+            string[] names = { "Very Easy", "Easy", "Moderate", "Hard", "Very Hard" };
+            for (int i = 0; i < numOfDifficulties; i++)
+            {
+                radioButtons[i] = new RadioButton();
+                this.Controls.Add(radioButtons[i]);
+                radioButtons[i].Text = names[i];
+                radioButtons[i].Location = new Point(buttonPadding * 3 + buttonWidth + sudokuSize * sizeOfGrid, buttonPadding * (i*2 + 1));
+                radioButtons[i].AutoSize = true;
+
+            }
+            radioButtons[0].Checked = true;
+        }
         public void loadSudoku(int number)
         {
             for (int i = 0; i < sudokuSize; i++ )
@@ -178,9 +210,11 @@ namespace Sudoku
         {
             InitializeComponent();
             readSudokus();
-            loadSudoku(1);
             CreateSudoku();
             CreateButtons();
+            createRadioButtons();
+            createLabel();
+            startGame();
         }
 
         public void readSudokus()
@@ -213,9 +247,25 @@ namespace Sudoku
            
         }
 
+        public void startGame()
+        {
+            for (int i = 0; i < numOfDifficulties; i++)
+            {
+
+                if (radioButtons[i].Checked == true)
+                {
+
+                    Random r = new Random();
+                    int sudokuNumber = r.Next(i * 10, (i + 1) * 10);
+                    loadSudoku(sudokuNumber);
+                    updateGridText();
+                    break;
+                }
+            }
+        }
         private void startButton_Click(object sender, EventArgs e)
         {
-            
+            startGame();
         }
 
 
@@ -226,6 +276,7 @@ namespace Sudoku
         }
         private void clearButton_Click(object sender, EventArgs e)
         {
+            
             for (int r = 0; r < sudokuSize; r++)
             {
                 for (int c = 0; c < sudokuSize; c++)
