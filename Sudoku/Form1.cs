@@ -16,6 +16,7 @@ namespace Sudoku
     {
         public int numberInRow;
         public int numberInCol;
+        public bool solved;
 
        
     }
@@ -144,6 +145,11 @@ namespace Sudoku
                     if (numbers[j, i] != 0)
                     {
                         loaded[j, i] = true;
+                        grids[j, i].solved = true;
+                    }
+                    else
+                    {
+                        grids[j, i].solved = false;
                     }
                 }
             }
@@ -187,7 +193,7 @@ namespace Sudoku
 
             checkButton.Text = "Check";
             this.Controls.Add(checkButton);
-            this.startButton.Click += new System.EventHandler(this.checkButton_Click);
+            this.checkButton.Click += new System.EventHandler(this.checkButton_Click);
 
             solutionButton.Text = "Solution";
             this.Controls.Add(solutionButton);
@@ -346,6 +352,7 @@ namespace Sudoku
                 for (int c = 0; c < sudokuSize; c++)
                 {
                     numbers[r, c] = solvedSudoku[r, c];
+                    grids[r, c].solved = true;
                 }
             }
             updateGridText();
@@ -355,6 +362,29 @@ namespace Sudoku
         private void checkButton_Click(object sender, EventArgs e)
         {
             
+            for (int r = 0; r < sudokuSize; r++)
+            {
+                for (int c = 0; c < sudokuSize; c++)
+                {
+                    if (numbers[r, c] != 0 && loaded[r,c] == false)
+                    {
+                        grids[r, c].solved = true;
+                       
+                        if (numbers[r,c] == solvedSudoku[r, c])
+                        {
+                            grids[r, c].ForeColor = Color.Green;
+                        }
+                        else
+                        {
+                            numbers[r, c] = solvedSudoku[r, c];
+                            grids[r, c].Text = numbers[r, c].ToString();
+                            grids[r, c].ForeColor = Color.Red;
+                        }
+                        
+                        
+                    }
+                }
+            }
            
         }
         private void clearButton_Click(object sender, EventArgs e)
@@ -364,8 +394,14 @@ namespace Sudoku
             {
                 for (int c = 0; c < sudokuSize; c++)
                 {
+                    grids[r, c].ForeColor = Color.Black;
                     if (loaded[r, c] == false)
+                    {
                         numbers[r, c] = 0;
+                        grids[r, c].solved = false;
+                    }
+                       
+                        
                 }
             }
             updateGridText();
@@ -374,7 +410,10 @@ namespace Sudoku
         private void grid_keyPressed(object sender, KeyPressEventArgs e)
         {
             var grid = sender as Grid;
-
+            if (grid.solved)
+            {
+                return;
+            }    
             if (Char.IsDigit(e.KeyChar))
             {
                  if (e.KeyChar == '0')
