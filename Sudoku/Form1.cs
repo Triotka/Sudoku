@@ -24,6 +24,8 @@ namespace Sudoku
     
     public partial class Form1 : Form
     {
+        const int formWidth = 700;
+        const int formHeight = 500;
         const int numberOfSudokus = 50; //number of sudokus in file
         const int sudokuSize = 9; //size of sudoku 9x9
         public int sizeOfGrid = 40; //size of square grid
@@ -340,6 +342,8 @@ namespace Sudoku
             UpdateGridText(); //display solution
         }
 
+
+        
         //can be used to add points after asking for complete solution
         private void checkButton_Click(object sender, EventArgs e)
         {
@@ -411,8 +415,16 @@ namespace Sudoku
             }
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+            this.Size = new Size(formWidth, formHeight); 
+            this.Text = "Sudoku";
+        }
+
         public Form1()
         {
+            this.Load += Form1_Load;
             InitializeComponent();
             ReadSudokus();
             CreateSudoku();
