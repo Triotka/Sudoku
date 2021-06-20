@@ -245,28 +245,7 @@ namespace Sudoku
             {
                 for (int c = 0; c < sudokuSize; c++)
                 {
-                    if (r >= 3 && r < 6) // midle rows
-                    {
-                        if (c >= 3 && c < 6) // middle collumns
-                        {
-                            grids[r, c].BackColor = color1;
-                        }
-                        else
-                        {
-                            grids[r, c].BackColor = color2;
-                        }
-                    }
-                    else
-                    {
-                        if (!(c >= 3 && c < 6))
-                        {
-                            grids[r, c].BackColor = color1;
-                        }
-                        else
-                        {
-                            grids[r, c].BackColor = color2;
-                        }
-                    }
+                    grids[r, c].BackColor = ((r >= 3 && r < 6) == (c >= 3 && c < 6)) ? color1 : color2;
 
                 }
             }
