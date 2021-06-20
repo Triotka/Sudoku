@@ -426,19 +426,8 @@ namespace Sudoku
             }    
             if (Char.IsDigit(e.KeyChar)) //key pressed is a number
             {
-                 if (e.KeyChar == '0')
-                 {
-                   
-                    numbers[grid.numberInRow, grid.numberInCol] = 0;
-                 }
-                else
-                {
-                    
-                    numbers[grid.numberInRow, grid.numberInCol] = int.Parse(e.KeyChar.ToString());
-
-                }
+               numbers[grid.numberInRow, grid.numberInCol] = int.Parse(e.KeyChar.ToString());
                 UpdateGridText();
-            
             }
         }
 
