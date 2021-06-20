@@ -50,15 +50,15 @@ namespace Sudoku
         int points; //count checked right answers
         
         // finds solution to sudoku given and returns the solution
-        public int[,] solveSudoku(int[,] original)
+        public int[,] SolveSudoku(int[,] original)
         {
             int[,] solved = (int[,])original.Clone();
 
-            solve(solved);
+            Solve(solved);
             return solved;
         }
         // recursively calling
-        private static bool solve(int [,] game)
+        private static bool Solve(int [,] game)
         {
             for (int r = 0; r < game.GetLength(0); r++)
             {
@@ -68,11 +68,11 @@ namespace Sudoku
                     {
                         for (int num = 1; num <= 9; num++)
                         {
-                            if (isValid(game, r, c, num))
+                            if (IsValid(game, r, c, num))
                             {
                                 game[r, c] = num;
 
-                                if (solve(game))
+                                if (Solve(game))
                                 {
                                     return true;
                                 }
@@ -90,7 +90,7 @@ namespace Sudoku
             return true;
         }
         // checks if sudoku spaces are valid
-        private static bool isValid(int[,] game, int row, int col, int num)
+        private static bool IsValid(int[,] game, int row, int col, int num)
         {
             for (int i = 0; i < 9; i++)
             {
@@ -108,7 +108,7 @@ namespace Sudoku
         }
 
         //creates label for points
-        public void createLabel()
+        public void CreateLabel()
         {
             pointsLabel = new Label();
             this.Controls.Add(pointsLabel);
@@ -119,7 +119,7 @@ namespace Sudoku
         }
 
         //creates Radio Buttons for choosing difficulty
-        public void createRadioButtons()
+        public void CreateRadioButtons()
         {
             string[] names = { "Very Easy", "Easy", "Moderate", "Hard", "Very Hard" };
             for (int i = 0; i < numOfDifficulties; i++)
@@ -135,9 +135,9 @@ namespace Sudoku
         }
 
         //loads sudoku certain sudoku of certain number from stored sudokus to screen and finds solution to it
-        public void loadSudoku(int number)
+        public void LoadSudoku(int number)
         {
-            changePoints(0);
+            ChangePoints(0);
             for (int i = 0; i < sudokuSize; i++ )
             {
                 for (int j = 0; j < sudokuSize; j++)
@@ -155,11 +155,11 @@ namespace Sudoku
                     }
                 }
             }
-            solvedSudoku = solveSudoku(numbers);
+            solvedSudoku = SolveSudoku(numbers);
         }
 
         // makes numbers visible to player from numbers[,] array
-        public void updateGridText()
+        public void UpdateGridText()
         {
             for (int r = 0; r < sudokuSize; r++)
             {
@@ -203,12 +203,12 @@ namespace Sudoku
             solutionButton.Text = "Solution";
             this.Controls.Add(solutionButton);
             this.solutionButton.Click += new System.EventHandler(this.solutionButton_Click);
-            changesSizesButtons();
+            ChangesSizesButtons();
 
         }
 
         //sets sizes and locations to buttons
-        public void changesSizesButtons()
+        public void ChangesSizesButtons()
         {
             clearButton.Size = new Size(buttonWidth, buttonHeight);
             clearButton.Location = new Point(buttonPadding, buttonPadding);
@@ -225,7 +225,7 @@ namespace Sudoku
         }
 
         //change sizes and location to sudoku
-        public void changeSizesSudoku()
+        public void ChangeSizesSudoku()
         {
             for (int r = 0; r < sudokuSize; r++)
             {
@@ -239,7 +239,7 @@ namespace Sudoku
 
 
         //colors sudoku
-        public void colorSudoku()
+        public void ColorSudoku()
         {
             for (int r = 0; r < sudokuSize; r++)
             {
@@ -287,14 +287,14 @@ namespace Sudoku
                     this.Controls.Add(grids[r,c]);
                 }
             }
-            updateGridText();
-            changeSizesSudoku();
-            colorSudoku();
+            UpdateGridText();
+            ChangeSizesSudoku();
+            ColorSudoku();
           
         }
         
         // reads sudokus from file sudoku.txt which should be in folder where program is built.
-        public void readSudokus()
+        public void ReadSudokus()
         {
             string currentDirectory = Directory.GetCurrentDirectory();
             string path = Path.Combine(currentDirectory, "sudoku.txt");
@@ -318,7 +318,7 @@ namespace Sudoku
         }
 
         //starts a game by loading sudoku according to picked difficulty
-        public void startGame()
+        public void StartGame()
         {
             for (int i = 0; i < numOfDifficulties; i++)
             {
@@ -328,15 +328,15 @@ namespace Sudoku
                 {
                     Random r = new Random();
                     int sudokuNumber = r.Next(i * 10, (i + 1) * 10);    //for each difficulty we have 10 sudokus
-                    loadSudoku(sudokuNumber);
-                    updateGridText();
+                    LoadSudoku(sudokuNumber);
+                    UpdateGridText();
                     break;
                 }
             }
         }
 
         // change point to number passed and display in on label
-        public void changePoints(int change)
+        public void ChangePoints(int change)
         {
             points = change;
             pointsLabel.Text = "Score: " + change.ToString();
@@ -344,7 +344,7 @@ namespace Sudoku
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            startGame();
+            StartGame();
         }
 
         private void solutionButton_Click(object sender, EventArgs e)
@@ -357,7 +357,7 @@ namespace Sudoku
                     grids[r, c].solved = true;  // we used solution button so we cannot type to sudoku
                 }
             }
-            updateGridText(); //display solution
+            UpdateGridText(); //display solution
         }
 
         //can be used to add points after asking for complete solution
@@ -391,14 +391,14 @@ namespace Sudoku
                     }
                 }
             }
-            changePoints(points);   //add points
+            ChangePoints(points);   //add points
            
         }
 
        
         private void clearButton_Click(object sender, EventArgs e)
         {
-            changePoints(0); //zero out points
+            ChangePoints(0); //zero out points
             
             for (int r = 0; r < sudokuSize; r++)
             {
@@ -414,7 +414,7 @@ namespace Sudoku
                         
                 }
             }
-            updateGridText();
+            UpdateGridText();
         }
 
         private void grid_keyPressed(object sender, KeyPressEventArgs e)
@@ -437,7 +437,7 @@ namespace Sudoku
                     numbers[grid.numberInRow, grid.numberInCol] = int.Parse(e.KeyChar.ToString());
 
                 }
-                updateGridText();
+                UpdateGridText();
             
             }
         }
@@ -445,12 +445,12 @@ namespace Sudoku
         public Form1()
         {
             InitializeComponent();
-            readSudokus();
+            ReadSudokus();
             CreateSudoku();
             CreateButtons();
-            createRadioButtons();
-            createLabel();
-            startGame();
+            CreateRadioButtons();
+            CreateLabel();
+            StartGame();
         }
     }
 }
