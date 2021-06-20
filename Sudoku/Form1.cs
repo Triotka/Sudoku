@@ -151,6 +151,7 @@ namespace Sudoku
                     }
                     else
                     {
+                        loaded[j, i] = false;
                         grids[j, i].solved = false; //not sure if it is right not checked or loaded
                     }
                 }
